@@ -21,8 +21,9 @@ class MainWidget(RelativeLayout):
     text = StringProperty('')
 
     # apps color scheme.
+    background = ColorProperty("#36575c")
     primary = ColorProperty([0, 0, 0, 0.8])
-    secondary = ColorProperty("#36575c")
+    secondary = ColorProperty("#484a4a")
     # [0, 0, 0, 0.6]
 
     music_obj = ObjectProperty(None)
@@ -110,7 +111,7 @@ class MainWidget(RelativeLayout):
 
     def load_song(self) -> None:
         print(self.song_list2[self.song_num])
-        # pygame.mixer.music.load()
+        # pygame.mixer.music.load(self.song_list2[self.song_num])
 
     def play_pause_state(self) -> None:
         if self.play_state == 0:

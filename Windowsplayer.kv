@@ -3,7 +3,7 @@ MainWidget:
 <MainWidget>:
     canvas.before:
         Color:
-            rgba: 0.1, 0.1, 0.1, 1
+            rgba: root.background
         Rectangle:
             size: self.size
             #source: "images/57174.jpg"
@@ -24,7 +24,7 @@ MainWidget:
 
             icon: root.center_button
 
-            pos_hint: {"center_x":.75, "center_y":0.05}
+            pos_hint: {"center_x":.75, "center_y":0.06}
             on_press: root.play_pause_state()
 
         MDFloatingActionButton:# previous button
@@ -36,7 +36,7 @@ MainWidget:
 
             icon: "skip-previous"
 
-            pos_hint: {"center_x":.6, "center_y":0.05}
+            pos_hint: {"center_x":.6, "center_y":0.06}
             on_press: root.previous()
 
         MDFloatingActionButton:# next button
@@ -44,5 +44,5 @@ MainWidget:
 
             icon: 'skip-next'
 
-            pos_hint: {"center_x":.9, "center_y":0.05}
+            pos_hint: {"center_x":.9, "center_y":0.06}
             on_press:  root.next()
