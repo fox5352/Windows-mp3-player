@@ -1,0 +1,48 @@
+MainWidget:
+
+<MainWidget>:
+    canvas.before:
+        Color:
+            rgba: 0.1, 0.1, 0.1, 1
+        Rectangle:
+            size: self.size
+            #source: "images/57174.jpg"
+
+    RelativeLayout:
+        size: root.width, 0.3*root.height
+
+        BoxLayout:
+            orientation: "vertical"
+            pos_hint: {"center_x":.25, "center_y":0.05}
+            Label:
+                #text_size: self.size
+                text: root.text
+                halign: 'left'
+
+        MDFloatingActionButton:#pause button
+            md_bg_color: root.secondary
+
+            icon: root.center_button
+
+            pos_hint: {"center_x":.75, "center_y":0.05}
+            on_press: root.play_pause_state()
+
+        MDFloatingActionButton:# previous button
+            md_bg_color: root.secondary
+
+            #size_hint: None, None
+            increment_width: dp(0.3*root.width)
+            height: dp(0.3*root.height)
+
+            icon: "skip-previous"
+
+            pos_hint: {"center_x":.6, "center_y":0.05}
+            on_press: root.previous()
+
+        MDFloatingActionButton:# next button
+            md_bg_color: root.secondary
+
+            icon: 'skip-next'
+
+            pos_hint: {"center_x":.9, "center_y":0.05}
+            on_press:  root.next()

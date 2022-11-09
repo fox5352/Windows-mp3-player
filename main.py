@@ -1,0 +1,170 @@
+import os
+
+import kivy
+import pygame
+from kivy.core.window import Window
+from kivy.properties import StringProperty, BooleanProperty, ColorProperty, ObjectProperty, DictProperty, \
+    NumericProperty, Clock
+from kivy.uix.button import Button
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.scrollview import ScrollView
+from kivymd.app import MDApp
+
+
+class MainWidget(RelativeLayout):
+    music_dir = r'C:\Users\Razor\Music'
+    music_path = StringProperty()
+    list_of_files = []
+    center_button = StringProperty(r'play')
+    center_button_state = BooleanProperty(False)
+
+    text = StringProperty('')
+
+    # apps color scheme.
+    primary = ColorProperty([0, 0, 0, 0.8])
+    secondary = ColorProperty("#36575c")#[0, 0, 0, 0.6]
+
+    music_obj = ObjectProperty(None)
+
+    song_list1 = DictProperty()# list of the songs dir and pos for loading files.
+    song_list2 = DictProperty()# list of files names to append to the button.
+
+    index_pos = NumericProperty(0)# the index position of the song that's playing
+    length_of_list = NumericProperty(0)# the length of the list to allow for cycling of the list
+
+    play_state = NumericProperty(0)# to check if the song needs to start or paused or unpaused
+    music_volume = NumericProperty(1)# volume of the music
+    progressbar = ObjectProperty()# the value of the progressbar
+
+    music_length = NumericProperty(0)# the length of the song
+    music_curr_pos = NumericProperty(0)# the positioning of the song
+    songs_vol = NumericProperty(0)
+
+    def __init__(self, **kwargs):
+        super(MainWidget, self).__init__(**kwargs)
+        pygame.mixer.init()# initiates the pygame mixer method
+        self.load_files()
+        Clock.schedule_interval(self.update, 1.0/15)#
+
+    def load_files(self):
+        self.updater = None
+        num = 0
+        folder = ''
+
+        layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None)# creates a gridlayout to add the buttons into
+        layout2.bind(minimum_height=layout2.setter('height'))# not sure how it works but makes the scrollview work
+
+        # uses the os.walk to search through the directory
+        for root, dir, files in os.walk(self.music_dir):
+            for folders in dir:
+                folder = folders
+            for name in files:
+                # if the file is and mp3 file it start the appending sequence
+                if name.endswith('.mp3'):
+                    self.music_path = os.path.join(root)
+                    if self.music_path in self.list_of_files:
+                        pass
+                    else:
+                        self.list_of_files.append(self.music_path)
+                        self.song_list1[self.length_of_list] = root
+
+                        btn = Button(text=self.song_list1[self.length_of_list], size_hint_y=None, height=40,
+                                     background_color=self.primary, on_press=(lambda x, y=num: self.screen_press(y)))
+                        #appends the button to the grid layout.
+                        layout2.add_widget(btn)
+                        num += 1
+                        self.length_of_list += 1
+
+        # creates a scrollview to add the grid too.
+        main_window = ScrollView(size_hint=(1, .86), size=(Window.width, Window.height),
+                                 do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
+                                 scroll_distance=100, pos_hint={'center_x': 0.5, 'center_y': 0.56})
+
+        # adds the gird to the scrollview
+        main_window.add_widget(layout2)
+
+        # adds the scrollview to the main layout
+        self.add_widget(main_window)
+
+        # the length of te list is 1 integer to long so this removes 1
+        self.length_of_list = self.length_of_list - 1
+        # start the audio function
+
+    def screen_press(self, y: int):
+        if self.song_list2:
+            self.song_list2 = {}
+            num = 0
+            for root, dir, files in os.walk(self.song_list1[y]):
+                for name in files:
+                    # if the file is and mp3 file it start the appending sequence
+                    if name.endswith('.mp3'):
+                        self.song_list2[num] = os.path.join(root, name)
+                        num += 1
+        else:
+            num = 0
+            for root, dir, files in os.walk(self.song_list1[y]):
+                for name in files:
+                    # if the file is and mp3 file it start the appending sequence
+                    if name.endswith('.mp3'):
+                        self.song_list2[num] = os.path.join(root, name)
+                        num += 1
+        self.load_song()
+
+
+    def load_song(self):
+        pass
+
+    def play_pause_state(self, *args):
+        song_pos = 0
+        if self.play_state == 0:
+            pygame.mixer.music.play()
+
+            self.bar_label()
+            # changes the center button to pause icon when playing
+            self.center_button = 'pause'
+            self.center_button_state = True
+            self.play_state += 1
+
+        elif self.play_state == 1:
+            # changes the center button to pause icon when playing
+            pygame.mixer.music.pause()
+            self.center_button = 'play'
+            self.center_button_state = False
+            self.play_state += 1
+        else:
+            pygame.mixer.music.unpause()
+            self.center_button = 'pause'
+            self.center_button_state = True
+            self.play_state -= 1
+
+    def next(self):
+        if self.index_pos == self.length_of_list:
+            self.index_pos = 0
+            self.play_state = 1
+
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load(self.song_list1[self.index_pos])
+            pygame.mixer.music.play()
+
+            self.center_button = 'pause'
+            self.bar_label()
+        else:
+            self.index_pos += 1
+            self.play_state = 1
+
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load(self.song_list1[self.index_pos])
+            pygame.mixer.music.play()
+
+            self.center_button = 'pause'
+
+    def update(self, dt):
+        pass
+
+class WindowsplayerApp(MDApp):
+    pass
+
+WindowsplayerApp().run()
