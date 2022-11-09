@@ -1,10 +1,9 @@
 import os
-
-import kivy
 import pygame
+
 from kivy.core.window import Window
-from kivy.properties import StringProperty, BooleanProperty, ColorProperty, ObjectProperty, DictProperty, \
-    NumericProperty, Clock
+from kivy.properties import StringProperty, Clock, BooleanProperty, ColorProperty, ObjectProperty, DictProperty, \
+    NumericProperty
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.relativelayout import RelativeLayout
@@ -23,7 +22,8 @@ class MainWidget(RelativeLayout):
 
     # apps color scheme.
     primary = ColorProperty([0, 0, 0, 0.8])
-    secondary = ColorProperty("#36575c")#[0, 0, 0, 0.6]
+    secondary = ColorProperty("#36575c")
+    # [0, 0, 0, 0.6]
 
     music_obj = ObjectProperty(None)
 
@@ -40,25 +40,22 @@ class MainWidget(RelativeLayout):
     music_length = NumericProperty(0)# the length of the song
     music_curr_pos = NumericProperty(0)# the positioning of the song
     songs_vol = NumericProperty(0)
+    song_num = NumericProperty(0)
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(MainWidget, self).__init__(**kwargs)
         pygame.mixer.init()# initiates the pygame mixer method
         self.load_files()
-        Clock.schedule_interval(self.update, 1.0/15)#
+        Clock.schedule_interval(self.update, 1.0/15)
 
-    def load_files(self):
-        self.updater = None
+    def load_files(self) -> None:
         num = 0
-        folder = ''
 
         layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None)# creates a gridlayout to add the buttons into
         layout2.bind(minimum_height=layout2.setter('height'))# not sure how it works but makes the scrollview work
 
         # uses the os.walk to search through the directory
         for root, dir, files in os.walk(self.music_dir):
-            for folders in dir:
-                folder = folders
             for name in files:
                 # if the file is and mp3 file it start the appending sequence
                 if name.endswith('.mp3'):
@@ -91,7 +88,7 @@ class MainWidget(RelativeLayout):
         self.length_of_list = self.length_of_list - 1
         # start the audio function
 
-    def screen_press(self, y: int):
+    def screen_press(self, y: int) -> None:
         if self.song_list2:
             self.song_list2 = {}
             num = 0
@@ -111,12 +108,11 @@ class MainWidget(RelativeLayout):
                         num += 1
         self.load_song()
 
+    def load_song(self) -> None:
+        print(self.song_list2[self.song_num])
+        # pygame.mixer.music.load()
 
-    def load_song(self):
-        pass
-
-    def play_pause_state(self, *args):
-        song_pos = 0
+    def play_pause_state(self) -> None:
         if self.play_state == 0:
             pygame.mixer.music.play()
 
@@ -138,33 +134,32 @@ class MainWidget(RelativeLayout):
             self.center_button_state = True
             self.play_state -= 1
 
-    def next(self):
-        if self.index_pos == self.length_of_list:
-            self.index_pos = 0
+    def next(self) -> None:
+        self.song_num += 1
+        if self.song_num == len(self.song_list2)-1:
+            self.song_num = 0
             self.play_state = 1
 
             pygame.mixer.music.stop()
-            pygame.mixer.music.unload()
-            pygame.mixer.music.load(self.song_list1[self.index_pos])
+            pygame.mixer.music.load(self.song_list2[self.song_num])
             pygame.mixer.music.play()
 
             self.center_button = 'pause'
-            self.bar_label()
         else:
-            self.index_pos += 1
+            self.song_num += 1
             self.play_state = 1
 
             pygame.mixer.music.stop()
-            pygame.mixer.music.unload()
-            pygame.mixer.music.load(self.song_list1[self.index_pos])
+            pygame.mixer.music.load(self.song_list2[self.song_num])
             pygame.mixer.music.play()
 
             self.center_button = 'pause'
 
-    def update(self, dt):
+    def update(self, dt: float) -> None:
         pass
 
 class WindowsplayerApp(MDApp):
     pass
+
 
 WindowsplayerApp().run()
