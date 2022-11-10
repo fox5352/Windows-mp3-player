@@ -16,7 +16,7 @@ from kivymd.app import MDApp
 
 
 class MainWidget(RelativeLayout):
-    music_dir = r'F:\1Music'
+    music_dir = r'C:\Users\Public\Music'
     music_path = StringProperty()
     list_of_files = []
     center_button = StringProperty(r'play')
