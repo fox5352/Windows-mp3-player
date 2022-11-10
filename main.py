@@ -8,6 +8,7 @@ from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.scrollview import ScrollView
+from pynput.keyboard import Listener
 from kivymd.app import MDApp
 
 
@@ -47,6 +48,13 @@ class MainWidget(RelativeLayout):
         super(MainWidget, self).__init__(**kwargs)
         pygame.mixer.init()# initiates the pygame mixer method
         self.load_files()
+        listener_thread = Listener(on_press=self.on_press, on_release=None)
+        listener_thread.start()
+
+        self._keyboard = Window.request_keyboard(self.keyboard_closed, self)
+        self._keyboard.bind(on_key_down=self.on_keyboard_down)
+        self._keyboard.bind(on_key_up=self.on_keyboard_up)
+
         Clock.schedule_interval(self.update, 1.0/15)
 
     def load_files(self) -> None:
@@ -114,6 +122,8 @@ class MainWidget(RelativeLayout):
         pygame.mixer.music.load(self.song_list2[self.song_num])
         pygame.mixer.music.play()
         self.play_state = 1
+        self.center_button = 'pause'
+        self.center_button_state = True
 
     def play_pause_state(self) -> None:
         if self.play_state == 0:
@@ -174,11 +184,44 @@ class MainWidget(RelativeLayout):
             pygame.mixer.music.play()
             self.center_button = "pause"
 
+    def keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self.on_keyboard_down)
+        self._keyboard.unbind(on_key_up=self.on_keyboard_up)
+        self._keyboard = None
+
+
+    def on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        print(keycode[1])
+        # print(keyboard)
+        # print(text)
+        # print(modifiers)
+        if keycode[1] == 'f':
+            print("play_pause_state")
+            return True
+        if keycode[1] == 'f8':
+            print('next')
+            return True
+        if keycode[1] == 'f6':
+            print('previous')
+            return True
+
+    def on_keyboard_up(self, keyboard, keycode):
+        return True
+
+
     def on_press(self, key):
-        print(type(key))
+        if str(key) == '<179>':
+            self.play_pause_state()
+        if str(key) == '<176>':
+            self.next()
+        if str(key) == '<177>':
+            self.previous()
 
     def update(self, dt: float) -> None:
-        pass
+        if self.play_state == 1:
+            if not pygame.mixer.music.get_busy():
+                self.next()
+
 
 class WindowsplayerApp(MDApp):
     pass
