@@ -8,4 +8,4 @@ media control keys are
 </ul>
 <hr>
 the player looks for music in the music folder ill add more custom options later down the line<br>
-the stable version of the music player <a herf="https://github.com/fox5352/Windows-mp3-player/tree/stable/" target="_blank">is here</a>
+the stable version of the music player <a herf="https://github.com/fox5352/Windows-mp3-player/tree/stable/">is here</a>
