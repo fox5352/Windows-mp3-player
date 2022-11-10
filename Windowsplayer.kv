@@ -18,19 +18,25 @@ MainWidget:
 
         BoxLayout:
             orientation: "horizontal"
-            pos_hint: {"center_x":.25, "center_y":0.05}
-            size_hint: 0.3, 0.1
-            #Label:
-            #    #text_size: self.size
-            #    text: root.text
-            MDSlider:
-                id: slider
-                hint: False
-                value: 0
-                max: 100
-                step: 1
-                color: 0.44, 0.74, 0.97
-                #size: 0.3*root.width, 0.1*root.height
+            pos_hint: {"center_x":.25, "center_y":0.06}
+            size_hint: 0.3, 0.14
+
+            BoxLayout:
+                Label:
+                    #size_hint_y: None
+                    text_size: self.width, None
+                    text: root.text
+
+            BoxLayout:
+                MDSlider:
+                    orientation: 'vertical'
+                    id: slider
+                    hint: False
+                    value: 5
+                    max: 100
+                    step: 1
+                    color: 0.44, 0.74, 0.97
+                    size_hint: 1, 1
 
 
         MDFloatingActionButton:#pause button

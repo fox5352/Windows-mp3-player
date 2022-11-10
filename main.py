@@ -1,4 +1,6 @@
 import os
+import re
+
 import pygame
 
 from kivy.core.window import Window
@@ -14,11 +16,12 @@ from kivymd.app import MDApp
 
 
 class MainWidget(RelativeLayout):
-    music_dir = r'C:\Users\Razor\Music'
+    music_dir = r'F:\1Music'
     music_path = StringProperty()
     list_of_files = []
     center_button = StringProperty(r'play')
     center_button_state = BooleanProperty(False)
+    folder_name = ''
 
     text = StringProperty('testing')
 
@@ -72,7 +75,10 @@ class MainWidget(RelativeLayout):
                         self.list_of_files.append(self.music_path)
                         self.song_list1[self.length_of_list] = root
 
-                        btn = Button(text=self.song_list1[self.length_of_list], size_hint_y=None, height=40,
+                        file_name = self.song_list1[self.length_of_list].split('\\')
+                        # return str(file_name[-1].strip('.mp3'))
+
+                        btn = Button(text=file_name[-1].strip('.mp3'), size_hint_y=None, height=40,
                                      background_color=self.primary, on_press=(lambda x, y=num: self.screen_press(y)))
                         #appends the button to the grid layout.
                         layout2.add_widget(btn)
@@ -114,9 +120,16 @@ class MainWidget(RelativeLayout):
                         num += 1
         self.load_song()
 
+    def get_song_name(self) -> str:
+        file_name = self.song_list2[self.song_num].split('\\')
+        return str(file_name[-1].strip('.mp3'))
+
+
     def load_song(self) -> None:
         # print(self.song_list2[self.song_num])
+        self.song_num = 0
         pygame.mixer.music.load(self.song_list2[self.song_num])
+        self.text = self.get_song_name()
         pygame.mixer.music.play()
         self.play_state = 1
         self.center_button = 'pause'
@@ -154,6 +167,7 @@ class MainWidget(RelativeLayout):
 
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(self.song_list2[self.song_num])
+                self.text = self.get_song_name()
                 pygame.mixer.music.play()
 
                 self.center_button = 'pause'
@@ -163,6 +177,7 @@ class MainWidget(RelativeLayout):
 
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(self.song_list2[self.song_num])
+                self.text = self.get_song_name()
                 pygame.mixer.music.play()
 
                 self.center_button = 'pause'
@@ -177,6 +192,7 @@ class MainWidget(RelativeLayout):
 
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(self.song_list2[self.song_num])
+                self.text = self.get_song_name()
                 pygame.mixer.music.play()
                 self.center_button = "pause"
             else:
@@ -185,6 +201,7 @@ class MainWidget(RelativeLayout):
 
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(self.song_list2[self.song_num])
+                self.text = self.get_song_name()
                 pygame.mixer.music.play()
                 self.center_button = "pause"
         else:
