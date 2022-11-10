@@ -8,6 +8,7 @@ from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.scrollview import ScrollView
+from pynput import keyboard
 from pynput.keyboard import Listener
 from kivymd.app import MDApp
 
@@ -19,7 +20,7 @@ class MainWidget(RelativeLayout):
     center_button = StringProperty(r'play')
     center_button_state = BooleanProperty(False)
 
-    text = StringProperty('')
+    text = StringProperty('testing')
 
     # apps color scheme.
     background = ColorProperty("#36575c")
@@ -48,12 +49,8 @@ class MainWidget(RelativeLayout):
         super(MainWidget, self).__init__(**kwargs)
         pygame.mixer.init()# initiates the pygame mixer method
         self.load_files()
-        listener_thread = Listener(on_press=self.on_press, on_release=None)
-        listener_thread.start()
-
-        self._keyboard = Window.request_keyboard(self.keyboard_closed, self)
-        self._keyboard.bind(on_key_down=self.on_keyboard_down)
-        self._keyboard.bind(on_key_up=self.on_keyboard_up)
+        listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
+        listener.start()
 
         Clock.schedule_interval(self.update, 1.0/15)
 
@@ -126,99 +123,107 @@ class MainWidget(RelativeLayout):
         self.center_button_state = True
 
     def play_pause_state(self) -> None:
-        if self.play_state == 0:
-            pygame.mixer.music.play()
+        if self.song_list2:
+            if self.play_state == 0:
+                pygame.mixer.music.play()
 
-            # changes the center button to pause icon when playing
-            self.center_button = 'pause'
-            self.center_button_state = True
-            self.play_state += 1
+                # changes the center button to pause icon when playing
+                self.center_button = 'pause'
+                self.center_button_state = True
+                self.play_state += 1
 
-        elif self.play_state == 1:
-            # changes the center button to pause icon when playing
-            pygame.mixer.music.pause()
-            self.center_button = 'play'
-            self.center_button_state = False
-            self.play_state += 1
+            elif self.play_state == 1:
+                # changes the center button to pause icon when playing
+                pygame.mixer.music.pause()
+                self.center_button = 'play'
+                self.center_button_state = False
+                self.play_state += 1
+            else:
+                pygame.mixer.music.unpause()
+                self.center_button = 'pause'
+                self.center_button_state = True
+                self.play_state -= 1
         else:
-            pygame.mixer.music.unpause()
-            self.center_button = 'pause'
-            self.center_button_state = True
-            self.play_state -= 1
+            self.text = "playing"
 
     def next(self) -> None:
-        if self.song_num == len(self.song_list2)-1:
-            self.song_num = 0
-            self.play_state = 1
+        if self.song_list2:
+            if self.song_num == len(self.song_list2)-1:
+                self.song_num = 0
+                self.play_state = 1
 
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(self.song_list2[self.song_num])
-            pygame.mixer.music.play()
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(self.song_list2[self.song_num])
+                pygame.mixer.music.play()
 
-            self.center_button = 'pause'
+                self.center_button = 'pause'
+            else:
+                self.song_num += 1
+                self.play_state = 1
+
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(self.song_list2[self.song_num])
+                pygame.mixer.music.play()
+
+                self.center_button = 'pause'
         else:
-            self.song_num += 1
-            self.play_state = 1
-
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(self.song_list2[self.song_num])
-            pygame.mixer.music.play()
-
-            self.center_button = 'pause'
+            print("list not loaded")
 
     def previous(self) -> None:
-        if self.song_num == 0:
-            self.song_num = len(self.song_list2)-1
-            self.play_state = 1
+        if self.song_list2:
+            if self.song_num == 0:
+                self.song_num = len(self.song_list2) - 1
+                self.play_state = 1
 
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(self.song_list2[self.song_num])
-            pygame.mixer.music.play()
-            self.center_button = "pause"
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(self.song_list2[self.song_num])
+                pygame.mixer.music.play()
+                self.center_button = "pause"
+            else:
+                self.song_num -= 1
+                self.play_state = 1
+
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(self.song_list2[self.song_num])
+                pygame.mixer.music.play()
+                self.center_button = "pause"
         else:
-            self.song_num -= 1
-            self.play_state = 1
-
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(self.song_list2[self.song_num])
-            pygame.mixer.music.play()
-            self.center_button = "pause"
-
-    def keyboard_closed(self):
-        self._keyboard.unbind(on_key_down=self.on_keyboard_down)
-        self._keyboard.unbind(on_key_up=self.on_keyboard_up)
-        self._keyboard = None
-
-
-    def on_keyboard_down(self, keyboard, keycode, text, modifiers):
-        print(keycode[1])
-        # print(keyboard)
-        # print(text)
-        # print(modifiers)
-        if keycode[1] == 'f':
-            print("play_pause_state")
-            return True
-        if keycode[1] == 'f8':
-            print('next')
-            return True
-        if keycode[1] == 'f6':
-            print('previous')
-            return True
-
-    def on_keyboard_up(self, keyboard, keycode):
-        return True
-
+            self.text = "list not loaded"
 
     def on_press(self, key):
-        if str(key) == '<179>':
+        if str(key) == 'Key.media_play_pause':
             self.play_pause_state()
-        if str(key) == '<176>':
+        if str(key) == 'Key.media_next':
             self.next()
-        if str(key) == '<177>':
+        if str(key) == 'Key.media_previous':
             self.previous()
+        if str(key) == 'Key.f10':
+            self.vol_up()
+        if str(key) == 'Key.f10':
+            self.vol_down()
+
+    def on_release(self, key):
+        if key == keyboard.Key.esc:
+            return False
+
+
+    def vol_up(self):
+        vol = self.ids.slider.value/100
+        vol += 0.01
+        self.ids.slider.value = vol*100
+
+    def vol_down(self):
+        vol = self.ids.slider.value/100
+        vol -= 0.01
+        self.ids.slider.value = vol*100
+
+    def set_vol(self, volume: int) -> None:
+        pygame.mixer.music.set_volume(volume)
+
 
     def update(self, dt: float) -> None:
         if self.play_state == 1:
+            self.set_vol(self.ids.slider.value/100)
             if not pygame.mixer.music.get_busy():
                 self.next()
 

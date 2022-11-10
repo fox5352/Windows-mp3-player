@@ -9,15 +9,29 @@ MainWidget:
             #source: "images/57174.jpg"
 
     RelativeLayout:
-        size: root.width, 0.3*root.height
+        size: root.width, 0.15*root.height
+        canvas:
+            Color:
+                rgba: root.primary
+            Rectangle:
+                size: root.width, 0.15*root.height
 
         BoxLayout:
-            orientation: "vertical"
+            orientation: "horizontal"
             pos_hint: {"center_x":.25, "center_y":0.05}
-            Label:
-                #text_size: self.size
-                text: root.text
-                halign: 'left'
+            size_hint: 0.3, 0.1
+            #Label:
+            #    #text_size: self.size
+            #    text: root.text
+            MDSlider:
+                id: slider
+                hint: False
+                value: 0
+                max: 100
+                step: 1
+                color: 0.44, 0.74, 0.97
+                #size: 0.3*root.width, 0.1*root.height
+
 
         MDFloatingActionButton:#pause button
             md_bg_color: root.secondary
