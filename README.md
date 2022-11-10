@@ -7,4 +7,5 @@ media control keys are
 <li>fn+f8 is the next key</li>
 </ul>
 <hr>
-the player looks for music in the music folder ill add more custom options later down the line
+the player looks for music in the music folder ill add more custom options later down the line<br>
+the stable version of the music player <a herf="https://github.com/fox5352/Windows-mp3-player/tree/stable">is here</a>
