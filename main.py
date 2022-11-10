@@ -110,14 +110,15 @@ class MainWidget(RelativeLayout):
         self.load_song()
 
     def load_song(self) -> None:
-        print(self.song_list2[self.song_num])
-        # pygame.mixer.music.load(self.song_list2[self.song_num])
+        # print(self.song_list2[self.song_num])
+        pygame.mixer.music.load(self.song_list2[self.song_num])
+        pygame.mixer.music.play()
+        self.play_state = 1
 
     def play_pause_state(self) -> None:
         if self.play_state == 0:
             pygame.mixer.music.play()
 
-            self.bar_label()
             # changes the center button to pause icon when playing
             self.center_button = 'pause'
             self.center_button_state = True
@@ -136,7 +137,6 @@ class MainWidget(RelativeLayout):
             self.play_state -= 1
 
     def next(self) -> None:
-        self.song_num += 1
         if self.song_num == len(self.song_list2)-1:
             self.song_num = 0
             self.play_state = 1
@@ -155,6 +155,27 @@ class MainWidget(RelativeLayout):
             pygame.mixer.music.play()
 
             self.center_button = 'pause'
+
+    def previous(self) -> None:
+        if self.song_num == 0:
+            self.song_num = len(self.song_list2)-1
+            self.play_state = 1
+
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load(self.song_list2[self.song_num])
+            pygame.mixer.music.play()
+            self.center_button = "pause"
+        else:
+            self.song_num -= 1
+            self.play_state = 1
+
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load(self.song_list2[self.song_num])
+            pygame.mixer.music.play()
+            self.center_button = "pause"
+
+    def on_press(self, key):
+        print(type(key))
 
     def update(self, dt: float) -> None:
         pass
