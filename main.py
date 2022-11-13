@@ -64,19 +64,24 @@ class MainWidget(RelativeLayout):
         self.alert = None
         super(MainWidget, self).__init__(**kwargs)
         pygame.mixer.init() # initiates the pygame mixer method for playing the music
+        self.get_settings()
         self.load_files()
         listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         listener.start()
         Clock.schedule_interval(self.update, 1.0 / 1.0)# starts a schedule and update's it once every second
 
     def get_settings(self):
-        with open('get_setting.json', 'r') as file:
-            dic = json.loads(file.read())
+        try:
+            with open('get_setting.json', 'r') as file:
+                dic = json.loads(file.read())
 
-        self.music_dir = dic["music_dir"]
-        self.volume = int(dic['volume'])
-        if dic['add_play_lists'] == 'True':
-            self.append_list = True
+            self.music_dir = dic["music_dir"]
+            self.volume = int(dic['volume'])
+            if dic['add_play_lists'] == '1':
+                self.append_list = True
+        except Exception as error_msg:
+            print(error_msg)
+
 
     """gets an argument and creates a popup window that displays the error int a box"""
     def error(self, error):
@@ -331,10 +336,11 @@ class WindowsplayerApp(MDApp):
             "Main settings", self.config, data=settings_json)
 
     def on_config_change(self, config, section, key, value):
-        dict = {"add_play_lists": f"{self.config.get('settings_panel_one', 'bool')}",
-                "music_dir": f"{self.config.get('settings_panel_one', 'pathexample')}",
-                "volume": self.config.get('settings_panel_one', 'numericexample')
-                }
+        dict = {"add_play_lists": f"{self.config.get('settings panel one', 'bool')}",
+                "music_dir": f"{self.config.get('settings panel one', 'path')}",
+                "volume": str(self.config.get('settings panel one', 'numeric')),
+                "options": f"{self.config.get('settings panel one', 'option')}",
+                "string": self.config.get('settings panel one', "string"),}
         json_object = json.dumps(dict, indent=3)
         with open('get_setting.json', "w+") as file:
             file.write(json_object)
