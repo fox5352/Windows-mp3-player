@@ -1,0 +1,32 @@
+import json
+
+settings_json = json.dumps([
+    {"type": "title",
+     "title": "Settings"},
+    {"type": "bool",
+     "title": "allow adding to playlist",
+     "desc": "allows adding to playlist",
+     "section": "settings panel one",
+     "key": "bool"},
+    {"type": "numeric",
+     "title": "song volume",
+     "desc": "the colume of the music",
+     "section": "settings panel one",
+     "key": "numeric"},
+    {"type": "options",
+     "title": "option",
+     "desc": "option",
+     "section": "settings panel one",
+     "key": "option",
+     "options": ['option1', 'option2', 'option3']},
+    {"type": "string",
+     "title": "user name",
+     "desc": "your user name",
+     "section": "settings panel one",
+     "key": "string"},
+    {"type": "path",
+     "title": "music path",
+     "desc": "the path where the app looks for music",
+     "section": "settings panel one",
+     "key": "path"}
+])

@@ -1,3 +1,4 @@
+import json
 import os
 import re
 
@@ -15,6 +16,7 @@ from kivymd.uix.dialog import MDDialog
 from pynput import keyboard
 from pynput.keyboard import Listener
 from kivymd.app import MDApp
+from settingsjson import settings_json
 
 
 """Not being used yet"""
@@ -25,14 +27,15 @@ class Error_windows(RelativeLayout):
 
 "The apps main window"
 class MainWidget(RelativeLayout):
-    append_list = ObjectProperty(True)
+    append_list = ObjectProperty(False)
+
     music_dir = r'C:\Users\Public\Music'
     music_path = StringProperty()
     list_of_files = []
-    center_button = StringProperty(r'play')
-    center_button_state = BooleanProperty(False)
     folder_name = ''
 
+    center_button = StringProperty(r'play')
+    center_button_state = BooleanProperty(False)
     text = StringProperty('testing')
 
     # apps color scheme.
@@ -41,7 +44,6 @@ class MainWidget(RelativeLayout):
     secondary = ColorProperty("#484a4a")
 
     music_obj = ObjectProperty(None)
-
     song_list1 = DictProperty()  # list of the songs dir and pos for loading files.
     song_list2 = DictProperty()  # list of files names to append to the button.
 
@@ -55,6 +57,7 @@ class MainWidget(RelativeLayout):
     music_length = NumericProperty(0)  # the length of the song
     folder_num = NumericProperty(0)  # the positioning of the song
     songs_vol = NumericProperty(0)
+    volume = NumericProperty(5)
     song_num = NumericProperty(0)
 
     def __init__(self, **kwargs) -> None:
@@ -66,6 +69,14 @@ class MainWidget(RelativeLayout):
         listener.start()
         Clock.schedule_interval(self.update, 1.0 / 1.0)# starts a schedule and update's it once every second
 
+    def get_settings(self):
+        with open('get_setting.json', 'r') as file:
+            dic = json.loads(file.read())
+
+        self.music_dir = dic["music_dir"]
+        self.volume = int(dic['volume'])
+        if dic['add_play_lists'] == 'True':
+            self.append_list = True
 
     """gets an argument and creates a popup window that displays the error int a box"""
     def error(self, error):
@@ -305,6 +316,29 @@ class WindowsplayerApp(MDApp):
     def build(self):
         self.title = "Wmusic player"
         self.icon = r'assets\fox.png'
+
+
+    def build_config(self, config):
+        config.setdefaults("settings panel one",{
+            "bool": False,
+            "numeric": 5,
+            "option": "option2",
+            "string": "user",
+            "path": "C:\\Users\\Public\\Music"})
+
+    def build_settings(self, settings):
+        settings.add_json_panel(
+            "Main settings", self.config, data=settings_json)
+
+    def on_config_change(self, config, section, key, value):
+        dict = {"add_play_lists": f"{self.config.get('settings_panel_one', 'bool')}",
+                "music_dir": f"{self.config.get('settings_panel_one', 'pathexample')}",
+                "volume": self.config.get('settings_panel_one', 'numericexample')
+                }
+        json_object = json.dumps(dict, indent=3)
+        with open('get_setting.json', "w+") as file:
+            file.write(json_object)
+        # pass
 
 
 if __name__ == '__main__':

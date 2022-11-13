@@ -22,6 +22,11 @@ MainWidget:
             size_hint: 0.3, 0.14
 
             BoxLayout:
+                MDFloatingActionButton:
+                    icon: 'cog'
+                    on_press: app.open_settings()
+
+            BoxLayout:
                 Label:
                     #size_hint_y: None
                     text_size: self.width, None
