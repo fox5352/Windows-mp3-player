@@ -19,11 +19,12 @@ MainWidget:
         BoxLayout:
             orientation: "horizontal"
             pos_hint: {"center_x":.25, "center_y":0.06}
-            size_hint: 0.3, 0.14
+            size_hint: 0.4, 0.1
 
             BoxLayout:
                 MDFloatingActionButton:
                     icon: 'cog'
+                    md_bg_color: root.secondary
                     on_press: app.open_settings()
 
             BoxLayout:
@@ -71,3 +72,4 @@ MainWidget:
 
             pos_hint: {"center_x":.9, "center_y":0.06}
             on_press:  root.next()
+
