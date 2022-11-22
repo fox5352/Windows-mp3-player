@@ -42,6 +42,7 @@ class Error_windows(RelativeLayout):
 
 class MainWidget(RelativeLayout):
     append_list = ObjectProperty(False)
+    main_window = ObjectProperty()
 
     music_dir = r'C:\Users\Public\Music'
     get_music_path = StringProperty()
@@ -84,7 +85,7 @@ class MainWidget(RelativeLayout):
         # listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         # listener.start()
         Clock.schedule_interval(self.update, 1.0/1.0)
-        Clock.schedule_interval(self.setInterval, 5)
+        Clock.schedule_interval(self.setInterval, 1)
 
     def show(self) -> None:
         """this is for testing screens"""
@@ -141,30 +142,31 @@ class MainWidget(RelativeLayout):
                         file_name = self.song_list1[self.length_of_list].split('\\')
                         # return str(file_name[-1].strip('.mp3'))
 
-                        btn = Button(text=file_name[-1].strip('.mp3'), size_hint_y=None, height=40,
+                        self.btn = Button(text=file_name[-1].strip('.mp3'), size_hint_y=None, height=40,
                                      background_color=self.primary, on_press=(lambda x, y=num: self.screen_press(y)))
                         # appends the button to the grid layout.
-                        self.layout2.add_widget(btn)
+                        self.layout2.add_widget(self.btn)
                         num += 1
                         self.length_of_list += 1
 
         # creates a scrollview to add the grid too.
-        main_window = ScrollView(size_hint=(1, .86), size=(Window.width, Window.height),
+        self.main_window = ScrollView(size_hint=(1, .86), size=(Window.width, Window.height),
                                  do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
                                  scroll_distance=100, pos_hint={'center_x': 0.5, 'center_y': 0.56})
 
         # adds the gird to the scrollview
-        main_window.add_widget(self.layout2)
+        self.main_window .add_widget(self.layout2)
 
         # adds the scrollview to the main layout
-        self.add_widget(main_window)
+        self.add_widget(self.main_window)
 
         # the length of te list is 1 integer to long so this removes 1
         self.length_of_list = self.length_of_list - 1
         # start the audio function
 
     def re_load_files(self) -> None:
-        pass
+        self.main_window.remove_widget(self.layout2)
+        self.load_files()
 
     def screen_press(self, y: int) -> None:
         """
@@ -337,6 +339,7 @@ class MainWidget(RelativeLayout):
 
     def setInterval(self, dt: float) -> None:
         self.get_settings()
+        # self.re_load_files()
         if self.get_music_path != self.music_dir:
             self.re_load_files()
             self.get_music_path = self.music_dir
