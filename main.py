@@ -44,7 +44,7 @@ class MainWidget(RelativeLayout):
     append_list = ObjectProperty(False)
 
     music_dir = r'C:\Users\Public\Music'
-    get_music_path = music_dir
+    get_music_path = StringProperty()
     music_path = StringProperty()
     list_of_files = []
     folder_name = ''
@@ -79,20 +79,20 @@ class MainWidget(RelativeLayout):
         self.alert = None
         super(MainWidget, self).__init__(**kwargs)
         pygame.mixer.init()  # initiates the pygame mixer method for playing the music
-        self.get_settings()
+        self.get_music_path = self.get_settings()
         self.load_files()
-        listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
-        listener.start()
+        # listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
+        # listener.start()
         Clock.schedule_interval(self.update, 1.0/1.0)
         Clock.schedule_interval(self.setInterval, 5)
 
-    def show(self):
+    def show(self) -> None:
         """this is for testing screens"""
         setting_menu = CustomSettings()
 
         self.add_widget(setting_menu)
 
-    def get_settings(self):
+    def get_settings(self) -> str:
         try:
             with open('get_setting.json', 'r') as file:
                 dic = json.loads(file.read())
@@ -104,7 +104,9 @@ class MainWidget(RelativeLayout):
         except Exception as error:
             print(error)
 
-    def error(self, error):
+        return self.music_dir
+
+    def error(self, error: str) -> None:
         """gets an argument and creates a popup window that displays the error int a box"""
         if self.alert:
             pass
@@ -161,49 +163,8 @@ class MainWidget(RelativeLayout):
         self.length_of_list = self.length_of_list - 1
         # start the audio function
 
-    def re_load_files(self):
-        num = 0
-        del self.layout2
-
-        self.layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None)  # creates a gridlayout to add the buttons into
-        self.layout2.bind(minimum_height=self.layout2.setter('height'))  # not sure how it works but makes the scrollview work
-
-        # uses the os.walk to search through the directory
-        for root, dir, files in os.walk(self.music_dir):
-            for name in files:
-                # if the file is and mp3 file it start the appending sequence
-                if name.endswith('.mp3'):
-                    self.music_path = os.path.join(root)
-                    if self.music_path in self.list_of_files:
-                        pass
-                    else:
-                        self.list_of_files.append(self.music_path)
-                        self.song_list1[self.length_of_list] = root
-
-                        file_name = self.song_list1[self.length_of_list].split('\\')
-                        # return str(file_name[-1].strip('.mp3'))
-
-                        btn = Button(text=file_name[-1].strip('.mp3'), size_hint_y=None, height=40,
-                                     background_color=self.primary, on_press=(lambda x, y=num: self.screen_press(y)))
-                        # appends the button to the grid layout.
-                        self.layout2.add_widget(btn)
-                        num += 1
-                        self.length_of_list += 1
-
-        # creates a scrollview to add the grid too.
-        main_window = ScrollView(size_hint=(1, .86), size=(Window.width, Window.height),
-                                 do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
-                                 scroll_distance=100, pos_hint={'center_x': 0.5, 'center_y': 0.56})
-
-        # adds the gird to the scrollview
-        main_window.add_widget(self.layout2)
-
-        # adds the scrollview to the main layout
-        self.add_widget(main_window)
-
-        # the length of te list is 1 integer to long so this removes 1
-        self.length_of_list = self.length_of_list - 1
-        # start the audio function
+    def re_load_files(self) -> None:
+        pass
 
     def screen_press(self, y: int) -> None:
         """
@@ -229,8 +190,8 @@ class MainWidget(RelativeLayout):
 
     def get_song_name(self) -> str:
         """
-            filters the song path to get te songs name
-            """
+        filters the song path to get te songs name
+        """
         file_name = self.song_list2[self.song_num].split('\\')
         return str(file_name[-1].strip('.mp3'))
 
@@ -329,25 +290,25 @@ class MainWidget(RelativeLayout):
         else:
             self.text = "list not loaded"
 
-    def on_press(self, key):
-        if str(key) == 'Key.media_play_pause':
-            self.play_pause_state()
-        if str(key) == 'Key.media_next':
-            self.next()
-        if str(key) == 'Key.media_previous':
-            self.previous()
-        if str(key) == 'Key.f10':
-            self.vol_up()
-        if str(key) == 'Key.f10':
-            self.vol_down()
+    # def on_press(self, key):
+    #     if str(key) == 'Key.media_play_pause':
+    #         self.play_pause_state()
+    #     if str(key) == 'Key.media_next':
+    #         self.next()
+    #     if str(key) == 'Key.media_previous':
+    #         self.previous()
+    #     if str(key) == 'Key.f10':
+    #         self.vol_up()
+    #     if str(key) == 'Key.f10':
+    #         self.vol_down()
 
-    @staticmethod
-    def on_release(key):
-        if key == keyboard.Key.esc:
-            return False
+    # @staticmethod
+    # def on_release(key):
+    #     if key == keyboard.Key.esc:
+    #         return False
 
 
-    def vol_up(self):
+    def vol_up(self) -> None:
         """
             gets the volume of the slider increases the slider by one
             """
@@ -356,7 +317,7 @@ class MainWidget(RelativeLayout):
         self.ids.slider.value = vol * 100
 
 
-    def vol_down(self):
+    def vol_down(self) -> None:
         """
             gets the volume of the slider decreases the slider by one
             """
@@ -376,11 +337,10 @@ class MainWidget(RelativeLayout):
 
     def setInterval(self, dt: float) -> None:
         self.get_settings()
-        self.re_load_files()
         if self.get_music_path != self.music_dir:
-            self.load_files()
-        print(f'{self.get_music_path}======{self.music_dir}')
-        print("updated")
+            self.re_load_files()
+            self.get_music_path = self.music_dir
+            print("updated")
 
     def update(self, dt: float) -> None:
         """
@@ -394,12 +354,12 @@ class MainWidget(RelativeLayout):
 
 
 class WindowsplayerApp(MDApp):
-    def build(self):
+    def build(self) -> None:
         self.title = "Wmusic player"
         self.icon = r'assets\fox.png'
         # self.settings_cls = SettingsWithSidebar()
 
-    def build_config(self, config):
+    def build_config(self, config) -> None:
         config.setdefaults("settings panel one", {
             "bool": False,
             "numeric": 5,
@@ -407,11 +367,11 @@ class WindowsplayerApp(MDApp):
             "string": "user",
             "path": "C:\\Users\\Public\\Music"})
 
-    def build_settings(self, settings):
+    def build_settings(self, settings) -> None:
         settings.add_json_panel(
             "Main settings", self.config, data=settings_json)
 
-    def on_config_change(self, config, section, key, value):
+    def on_config_change(self, config, section, key, value) -> None:
         dicts = {"add_play_lists": f"{self.config.get('settings panel one', 'bool')}",
                  "music_dir": f"{self.config.get('settings panel one', 'path')}",
                  "volume": str(self.config.get('settings panel one', 'numeric')),
