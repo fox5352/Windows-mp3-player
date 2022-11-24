@@ -53,7 +53,8 @@ class MainWidget(RelativeLayout):
     text = StringProperty('testing')
 
     # apps color scheme.
-    background = ColorProperty("#3fba8d")
+    background = ColorProperty([1, 0.62, 0, 0.85])
+    # background = ColorProperty("#3fba8d")
     primary = ColorProperty([0, 0, 0, 0.95])
     secondary = ColorProperty("#484a4a")
 
