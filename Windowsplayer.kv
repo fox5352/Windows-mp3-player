@@ -24,7 +24,7 @@ MainWidget:
             BoxLayout:
                 MDFloatingActionButton:
                     icon: 'cog'
-                    md_bg_color: root.secondary
+                    md_bg_color: root.background
                     on_press: app.open_settings()
 
             BoxLayout:
@@ -49,6 +49,7 @@ MainWidget:
             md_bg_color: root.secondary
 
             icon: root.center_button
+            md_bg_color: root.background
 
             pos_hint: {"center_x":.75, "center_y":0.06}
             on_press: root.play_pause_state()
@@ -61,6 +62,7 @@ MainWidget:
             height: dp(0.3*root.height)
 
             icon: "skip-previous"
+            md_bg_color: root.background
 
             pos_hint: {"center_x":.6, "center_y":0.06}
             on_press: root.previous()
@@ -69,6 +71,7 @@ MainWidget:
             md_bg_color: root.secondary
 
             icon: 'skip-next'
+            md_bg_color: root.background
 
             pos_hint: {"center_x":.9, "center_y":0.06}
             on_press:  root.next()

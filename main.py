@@ -3,6 +3,7 @@ import os
 
 import pygame
 from kivy.config import ConfigParser
+from kivy.core import window
 
 from kivy.core.window import Window
 from kivy.properties import StringProperty, Clock, BooleanProperty, ColorProperty, ObjectProperty, DictProperty, \
@@ -12,7 +13,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.settings import *
-from kivymd.uix.button import MDFlatButton
+from kivymd.uix.button import MDFlatButton, MDRaisedButton, MDRectangleFlatButton
 from kivymd.uix.dialog import MDDialog
 from pynput import keyboard
 from kivymd.app import MDApp
@@ -20,6 +21,7 @@ from settingsjson import settings_json
 
 
 class CustomSettings(SettingsWithSidebar):
+    """Not being used yet"""
     def __int__(self, **kwargs):
         super(Settings, self).__init__(**kwargs)
         self.config = ConfigParser()
@@ -36,10 +38,6 @@ class Error_windows(RelativeLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-
-"The apps main window"
-
-
 class MainWidget(RelativeLayout):
     append_list = ObjectProperty(False)
     main_window = ObjectProperty()
@@ -55,8 +53,8 @@ class MainWidget(RelativeLayout):
     text = StringProperty('testing')
 
     # apps color scheme.
-    background = ColorProperty("#36575c")
-    primary = ColorProperty([0, 0, 0, 0.8])
+    background = ColorProperty("#3fba8d")
+    primary = ColorProperty([0, 0, 0, 0.95])
     secondary = ColorProperty("#484a4a")
 
     music_obj = ObjectProperty(None)
@@ -87,13 +85,8 @@ class MainWidget(RelativeLayout):
         Clock.schedule_interval(self.update, 1.0/1.0)
         Clock.schedule_interval(self.setInterval, 1)
 
-    def show(self) -> None:
-        """this is for testing screens"""
-        setting_menu = CustomSettings()
-
-        self.add_widget(setting_menu)
-
     def get_settings(self) -> str:
+        """gets the app settings and apples them"""
         try:
             with open('get_setting.json', 'r') as file:
                 dic = json.loads(file.read())
@@ -117,11 +110,9 @@ class MainWidget(RelativeLayout):
             self.alert.open()
 
     def load_files(self) -> None:
-        """
-            searches the directory's with the os.walk() and creates a dictionary of the folders with all the mp3 in it
+        """searches the directory's with the os.walk() and creates a dictionary of the folders with all the mp3 in it
             stores the keys of all the folders in a button and loads it into a scrollview
-            I use a lambda func to store the keys in the button
-            """
+            I use a lambda func to store the keys in the button"""
         num = 0
 
         self.layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None)  # creates a gridlayout to add the buttons into
@@ -142,8 +133,8 @@ class MainWidget(RelativeLayout):
                         file_name = self.song_list1[self.length_of_list].split('\\')
                         # return str(file_name[-1].strip('.mp3'))
 
-                        self.btn = Button(text=file_name[-1], size_hint_y=None, height=40,
-                                     background_color=self.primary, on_press=(lambda x, y=num: self.screen_press(y)))
+                        self.btn = MDRectangleFlatButton(text=file_name[-1], size_hint=(self.layout2.width, self.layout2.width), height=40,
+                                     md_bg_color=self.primary, text_color=self.background, line_color=self.background, on_press=(lambda x, y=num: self.screen_press(y)))
                         # appends the button to the grid layout.
                         self.layout2.add_widget(self.btn)
                         num += 1
@@ -165,6 +156,7 @@ class MainWidget(RelativeLayout):
         # start the audio function
 
     def re_load_files(self) -> None:
+        """ Deletes the buttons from the gird layout and recalls the load_files() with the new directory"""
         for i in range(len(self.layout2.children)):
             del self.layout2.children[0]
 
@@ -203,10 +195,8 @@ class MainWidget(RelativeLayout):
         return str(file_name[-1].strip('.mp3'))
 
     def load_song(self) -> None:
-        """
-            try's to load the first song of the playlist into the mixer and the plays it
-            if it fails it calls the error function and loads the nest song in the playlist
-            """
+        """try's to load the first song of the playlist into the mixer and the plays it
+            if it fails it calls the error function and loads the nest song in the playlist"""
         self.song_num = 0
         try:
             pygame.mixer.music.load(self.song_list2[self.song_num])
@@ -219,9 +209,7 @@ class MainWidget(RelativeLayout):
         self.center_button_state = True
 
     def play_pause_state(self) -> None:
-        """
-        checks the play state the either to pause,play,unpause
-        """
+        """checks the play state the either to pause,play,unpause"""
         if self.song_list2:
             if self.play_state == 0:
                 pygame.mixer.music.play()
@@ -246,10 +234,8 @@ class MainWidget(RelativeLayout):
             self.text = "Playlist empty"
 
     def next(self) -> None:
-        """
-        checks it your at the end of the playlist and either adds one yo the index and plays next song.
-        or it at the end of the list and sets te index back to 0 and restarts teh playlist
-        """
+        """checks it your at the end of the playlist and either adds one yo the index and plays next song.
+            or it at the end of the list and sets te index back to 0 and restarts teh playlist"""
         if self.song_list2:
             if self.song_num == len(self.song_list2) - 1:
                 self.song_num = 0
@@ -271,10 +257,8 @@ class MainWidget(RelativeLayout):
 
 
     def previous(self) -> None:
-        """
-        checks it your at the start of the playlist and either set the index to the length of the list to start the last song.
-        or it removes -1 from the index and loads the previous song.
-        """
+        """checks it your at the start of the playlist and either set the index to the length of the
+            list to start the last song, or it removes -1 from the index and loads the previous song."""
         if self.song_list2:
             if self.song_num == 0:
                 self.song_num = len(self.song_list2) - 1
@@ -314,20 +298,15 @@ class MainWidget(RelativeLayout):
     #     if key == keyboard.Key.esc:
     #         return False
 
-
     def vol_up(self) -> None:
-        """
-            gets the volume of the slider increases the slider by one
-            """
+        """gets the volume of the slider increases the slider by one"""
         vol = self.ids.slider.value / 100
         vol += 0.01
         self.ids.slider.value = vol * 100
 
 
     def vol_down(self) -> None:
-        """
-            gets the volume of the slider decreases the slider by one
-            """
+        """gets the volume of the slider decreases the slider by one"""
         vol = self.ids.slider.value / 100
         vol -= 0.01
         self.ids.slider.value = vol * 100
@@ -335,10 +314,7 @@ class MainWidget(RelativeLayout):
 
     @staticmethod
     def set_vol(volume: int) -> None:
-        """
-        this is updates once every second.
-        gets the volume of the slider decreases or increases it
-        """
+        """this is updates once every second. gets the volume of the slider decreases or increases it"""
         pygame.mixer.music.set_volume(volume)
 
 
@@ -351,10 +327,7 @@ class MainWidget(RelativeLayout):
             print("updated")
 
     def update(self, dt: float) -> None:
-        """
-        this is called every second.
-        checks if the song is playing or if its over calls the next function
-        """
+        """this is called every second. checks if the song is playing or if its over calls the next function"""
         if self.play_state == 1:
             self.set_vol(self.ids.slider.value / 100)
             if not pygame.mixer.music.get_busy():
@@ -363,11 +336,13 @@ class MainWidget(RelativeLayout):
 
 class WindowsplayerApp(MDApp):
     def build(self) -> None:
+        """sets the name and icon of the app"""
         self.title = "Wmusic player"
         self.icon = r'assets\fox.png'
         # self.settings_cls = SettingsWithSidebar()
 
     def build_config(self, config) -> None:
+        """builds a default settings menu and assigns it values"""
         config.setdefaults("settings panel one", {
             "bool": False,
             "numeric": 5,
@@ -376,10 +351,12 @@ class WindowsplayerApp(MDApp):
             "path": "C:\\Users\\Public\\Music"})
 
     def build_settings(self, settings) -> None:
+        """gets data from the settings_json and configures the look of the window"""
         settings.add_json_panel(
             "Main settings", self.config, data=settings_json)
 
     def on_config_change(self, config, section, key, value) -> None:
+        """gets the data from the settings menu and writes them to a file"""
         dicts = {"add_play_lists": f"{self.config.get('settings panel one', 'bool')}",
                  "music_dir": f"{self.config.get('settings panel one', 'path')}",
                  "volume": str(self.config.get('settings panel one', 'numeric')),
@@ -393,3 +370,7 @@ class WindowsplayerApp(MDApp):
 
 if __name__ == '__main__':
     WindowsplayerApp().run()
+
+#TODO: add a window update that displays the list of songs after selecting a folder
+# add a custom font
+#
