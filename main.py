@@ -142,7 +142,7 @@ class MainWidget(RelativeLayout):
                         file_name = self.song_list1[self.length_of_list].split('\\')
                         # return str(file_name[-1].strip('.mp3'))
 
-                        self.btn = Button(text=file_name[-1].strip('.mp3'), size_hint_y=None, height=40,
+                        self.btn = Button(text=file_name[-1], size_hint_y=None, height=40,
                                      background_color=self.primary, on_press=(lambda x, y=num: self.screen_press(y)))
                         # appends the button to the grid layout.
                         self.layout2.add_widget(self.btn)
@@ -165,7 +165,12 @@ class MainWidget(RelativeLayout):
         # start the audio function
 
     def re_load_files(self) -> None:
-        self.main_window.remove_widget(self.layout2)
+        for i in range(len(self.layout2.children)):
+            del self.layout2.children[0]
+
+        self.song_list1 = []
+        self.length_of_list = 0
+        self.list_of_files = []
         self.load_files()
 
     def screen_press(self, y: int) -> None:
