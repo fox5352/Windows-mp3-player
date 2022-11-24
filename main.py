@@ -186,7 +186,6 @@ class MainWidget(RelativeLayout):
         # adds the scrollview to the main layout
         self.add_widget(self.main_window)
 
-
     def re_load_files(self) -> None:
         """ Deletes the buttons from the gird layout and recalls the load_files() with the new directory"""
         for i in range(len(self.layout2.children)):
@@ -329,7 +328,6 @@ class MainWidget(RelativeLayout):
         if str(b) == 'f10':
             self.vol_down()
 
-
     def _keyboard_released(self, window: object, keycode: tuple):
         pass
 
@@ -406,6 +404,6 @@ class WindowsplayerApp(MDApp):
 if __name__ == '__main__':
     WindowsplayerApp().run()
 
-#TODO: add keybinds
+#TODO: add a top bar with the options button
 # add a custom font
 #
