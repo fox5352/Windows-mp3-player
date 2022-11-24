@@ -11,6 +11,7 @@ from kivy.properties import StringProperty, Clock, BooleanProperty, ColorPropert
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.settings import *
 from kivymd.uix.button import MDFlatButton, MDRaisedButton, MDRectangleFlatButton
@@ -18,7 +19,6 @@ from kivymd.uix.dialog import MDDialog
 from pynput import keyboard
 from kivymd.app import MDApp
 from settingsjson import settings_json
-
 
 class CustomSettings(SettingsWithSidebar):
     """Not being used yet"""
@@ -31,12 +31,38 @@ class CustomSettings(SettingsWithSidebar):
         s = SettingsWithSidebar()
         s.add_json_panel('Custom panel', self.config, data=settings_json)
 
-
 class Error_windows(RelativeLayout):
     """Not being used yet"""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+
+class Music_folders(Screen):
+    layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None) # creates a gridlayout to add the buttons into
+    layout2.bind(minimum_height=layout2.setter('height'))  # not sure how it works but makes the scrollview work
+
+    def __int__(self):
+        self.width = Window.width
+        self.height = Window.height
+        self.but = MDRectangleFlatButton(text="test", size_hint=(self.width, self.width),height=40,)
+        self.layout2.add_widget(self.but)
+
+    def add(self, widget):
+        self.layout2.add_widget(widget)
+
+    def add_scrowl_view(self):
+        # creates a scrollview to add the grid too.
+        main_window = ScrollView(size_hint=(1, .86), size=(Window.width, Window.height),
+                                      do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
+                                      scroll_distance=100, pos_hint={'center_x': 0.5, 'center_y': 0.56})
+
+        # adds the gird to the scrollview
+        main_window.add_widget(self.layout2)
+
+        # adds the scrollview to the main layout
+        self.add_widget(main_window)
+
 
 class MainWidget(RelativeLayout):
     append_list = ObjectProperty(False)
@@ -76,6 +102,7 @@ class MainWidget(RelativeLayout):
     song_num = NumericProperty(0)
 
     def __init__(self, **kwargs) -> None:
+        self.screen_man = ScreenManager()
         self.alert = None
         super(MainWidget, self).__init__(**kwargs)
         pygame.mixer.init()  # initiates the pygame mixer method for playing the music
@@ -83,6 +110,9 @@ class MainWidget(RelativeLayout):
         self.load_files()
         # listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         # listener.start()
+        keyboard = Window.request_keyboard(self._keyboard_released, self)
+        keyboard.bind(on_key_down=self.keyboard_on_key_down)
+
         Clock.schedule_interval(self.update, 1.0/1.0)
         Clock.schedule_interval(self.setInterval, 1)
 
@@ -134,13 +164,16 @@ class MainWidget(RelativeLayout):
                         file_name = self.song_list1[self.length_of_list].split('\\')
                         # return str(file_name[-1].strip('.mp3'))
 
-                        self.btn = MDRectangleFlatButton(text=file_name[-1], size_hint=(self.layout2.width, self.layout2.width), height=40,
+                        self.btn = MDRectangleFlatButton(text=file_name[-1], size_hint=(self.width, self.width), height=40,
                                      md_bg_color=self.primary, text_color=self.background, line_color=self.background, on_press=(lambda x, y=num: self.screen_press(y)))
                         # appends the button to the grid layout.
                         self.layout2.add_widget(self.btn)
                         num += 1
                         self.length_of_list += 1
 
+
+        # the length of te list is 1 integer to long so this removes 1
+        self.length_of_list = self.length_of_list - 1
         # creates a scrollview to add the grid too.
         self.main_window = ScrollView(size_hint=(1, .86), size=(Window.width, Window.height),
                                  do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
@@ -149,12 +182,10 @@ class MainWidget(RelativeLayout):
         # adds the gird to the scrollview
         self.main_window .add_widget(self.layout2)
 
+
         # adds the scrollview to the main layout
         self.add_widget(self.main_window)
 
-        # the length of te list is 1 integer to long so this removes 1
-        self.length_of_list = self.length_of_list - 1
-        # start the audio function
 
     def re_load_files(self) -> None:
         """ Deletes the buttons from the gird layout and recalls the load_files() with the new directory"""
@@ -282,22 +313,25 @@ class MainWidget(RelativeLayout):
         else:
             self.text = "list not loaded"
 
-    # def on_press(self, key):
-    #     if str(key) == 'Key.media_play_pause':
-    #         self.play_pause_state()
-    #     if str(key) == 'Key.media_next':
-    #         self.next()
-    #     if str(key) == 'Key.media_previous':
-    #         self.previous()
-    #     if str(key) == 'Key.f10':
-    #         self.vol_up()
-    #     if str(key) == 'Key.f10':
-    #         self.vol_down()
+    def keyboard_on_key_down(self, window: object, keycode: tuple, text: str, super: object):
+        w = window
+        t = text
+        s = super
+        a, b = keycode
+        if str(b) == 'f7':
+            self.play_pause_state()
+        if str(b) == 'f8':
+            self.next()
+        if str(b) == 'f6':
+            self.previous()
+        if str(b) == 'f10':
+            self.vol_up()
+        if str(b) == 'f10':
+            self.vol_down()
 
-    # @staticmethod
-    # def on_release(key):
-    #     if key == keyboard.Key.esc:
-    #         return False
+
+    def _keyboard_released(self, window: object, keycode: tuple):
+        pass
 
     def vol_up(self) -> None:
         """gets the volume of the slider increases the slider by one"""
@@ -372,6 +406,6 @@ class WindowsplayerApp(MDApp):
 if __name__ == '__main__':
     WindowsplayerApp().run()
 
-#TODO: add a window update that displays the list of songs after selecting a folder
+#TODO: add keybinds
 # add a custom font
 #
