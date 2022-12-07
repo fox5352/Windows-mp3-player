@@ -8,15 +8,13 @@ from kivy.core import window
 from kivy.core.window import Window
 from kivy.properties import StringProperty, Clock, BooleanProperty, ColorProperty, ObjectProperty, DictProperty, \
     NumericProperty
-from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.settings import *
-from kivymd.uix.button import MDFlatButton, MDRaisedButton, MDRectangleFlatButton
+from kivymd.uix.button import MDFlatButton, MDRectangleFlatButton
 from kivymd.uix.dialog import MDDialog
-from pynput import keyboard
 from kivymd.app import MDApp
 from settingsjson import settings_json
 
@@ -99,7 +97,7 @@ class MainWidget(RelativeLayout):
     folder_num = NumericProperty(0)  # the positioning of the song
     songs_vol = NumericProperty(0)
     volume = NumericProperty(5)
-    song_num = NumericProperty(0)
+    song_num = NumericProperty(0)#test
 
     def __init__(self, **kwargs) -> None:
         self.screen_man = ScreenManager()
@@ -108,8 +106,6 @@ class MainWidget(RelativeLayout):
         pygame.mixer.init()  # initiates the pygame mixer method for playing the music
         self.get_music_path = self.get_settings()
         self.load_files()
-        # listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
-        # listener.start()
         keyboard = Window.request_keyboard(self._keyboard_released, self)
         keyboard.bind(on_key_down=self.keyboard_on_key_down)
 
@@ -312,7 +308,7 @@ class MainWidget(RelativeLayout):
         else:
             self.text = "list not loaded"
 
-    def keyboard_on_key_down(self, window: object, keycode: tuple, text: str, super: object):
+    def keyboard_on_key_down(self, window: object, keycode: tuple, text: str, super: object) -> None:
         w = window
         t = text
         s = super
@@ -328,7 +324,7 @@ class MainWidget(RelativeLayout):
         if str(b) == 'f10':
             self.vol_down()
 
-    def _keyboard_released(self, window: object, keycode: tuple):
+    def _keyboard_released(self, window: object, keycode: tuple) ->None:
         pass
 
     def vol_up(self) -> None:
@@ -406,4 +402,3 @@ if __name__ == '__main__':
 
 #TODO: add a top bar with the options button
 # add a custom font
-#
