@@ -97,7 +97,7 @@ class MainWidget(RelativeLayout):
     folder_num = NumericProperty(0)  # the positioning of the song
     songs_vol = NumericProperty(0)
     volume = NumericProperty(5)
-    song_num = NumericProperty(0)#test
+    song_num = NumericProperty(0)#test2
 
     def __init__(self, **kwargs) -> None:
         self.screen_man = ScreenManager()
