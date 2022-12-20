@@ -18,25 +18,10 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.app import MDApp
 from settingsjson import settings_json
 
-"""
-⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿
-⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢺⣿
-⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠜⣿
-⣿⣿⣿⣿⠿⠿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿⣿
-⣿⣿⡏⠁⠀⠀⠀⠀⠀⣀⣠⣤⣤⣶⣶⣶⣶⣶⣦⣤⡄⠀⠀⠀⠀⢀⣴⣿
-⣿⣿⣷⣄⠀⠀⠀⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⡧⠇⢀⣤⣶
-⣿⣿⣿⣿⣿⣿⣾⣮⣭⣿⡻⣽⣒⠀⣤⣜⣭⠐⢐⣒⠢⢰
-⣿⣿⣿⣿⣿⣿⣿⣏⣿⣿⣿⣿⣿⣿⡟⣾⣿⠂⢈⢿⣷⣞
-⣿⣿⣿⣿⣿⣿⣿⣿⣽⣿⣿⣷⣶⣾⡿⠿⣿⠗⠈⢻⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠻⠋⠉⠑⠀⠀⢘⢻
-⣿⣿⣿⣿⣿⣿⣿⡿⠟⢹⣿⣿⡇⢀⣶⣶⠴⠶⠀⠀⢽
-⣿⣿⣿⣿⣿⣿⡿⠀⠀⢸⣿⣿⠀⠀⠣⠀⠀⠀⠀⠀⡟⢿⣿
-⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠹⣿⣧⣀⠀⠀⠀⠀⡀⣴⠁⢘⡙
-⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⠗⠂⠄⠀⣴⡟⠀⠀⡃
-"""
 
 class CustomSettings(SettingsWithSidebar):
     """Not being used yet"""
+
     def __int__(self, **kwargs):
         super(Settings, self).__init__(**kwargs)
         self.config = ConfigParser()
@@ -46,6 +31,7 @@ class CustomSettings(SettingsWithSidebar):
         s = SettingsWithSidebar()
         s.add_json_panel('Custom panel', self.config, data=settings_json)
 
+
 class Error_windows(RelativeLayout):
     """Not being used yet"""
 
@@ -54,13 +40,16 @@ class Error_windows(RelativeLayout):
 
 
 class Music_folders(Screen):
-    layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None) # creates a gridlayout to add the buttons into
-    layout2.bind(minimum_height=layout2.setter('height'))  # not sure how it works but makes the scrollview work
+    # creates a gridlayout to add the buttons into
+    layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None)
+    # not sure how it works but makes the scrollview work
+    layout2.bind(minimum_height=layout2.setter('height'))
 
     def __int__(self):
         self.width = Window.width
         self.height = Window.height
-        self.but = MDRectangleFlatButton(text="test", size_hint=(self.width, self.width),height=40,)
+        self.but = MDRectangleFlatButton(
+            text="test", size_hint=(self.width, self.width), height=40,)
         self.layout2.add_widget(self.but)
 
     def add(self, widget):
@@ -69,8 +58,8 @@ class Music_folders(Screen):
     def add_scrowl_view(self):
         # creates a scrollview to add the grid too.
         main_window = ScrollView(size_hint=(1, .86), size=(Window.width, Window.height),
-                                      do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
-                                      scroll_distance=100, pos_hint={'center_x': 0.5, 'center_y': 0.56})
+                                 do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
+                                 scroll_distance=100, pos_hint={'center_x': 0.5, 'center_y': 0.56})
 
         # adds the gird to the scrollview
         main_window.add_widget(self.layout2)
@@ -100,13 +89,17 @@ class MainWidget(RelativeLayout):
     secondary = ColorProperty("#484a4a")
 
     music_obj = ObjectProperty(None)
-    song_list1 = DictProperty()  # list of the songs dir and pos for loading files.
+    # list of the songs dir and pos for loading files.
+    song_list1 = DictProperty()
     song_list2 = DictProperty()  # list of files names to append to the button.
 
-    index_pos = NumericProperty(0)  # the index position of the song that's playing
-    length_of_list = NumericProperty(0)  # the length of the list to allow for cycling of the list
+    # the index position of the song that's playing
+    index_pos = NumericProperty(0)
+    # the length of the list to allow for cycling of the list
+    length_of_list = NumericProperty(0)
 
-    play_state = NumericProperty(0)  # to check if the song needs to start or paused or unpaused
+    # to check if the song needs to start or paused or unpaused
+    play_state = NumericProperty(0)
     music_volume = NumericProperty(1)  # volume of the music
     progressbar = ObjectProperty()  # the value of the progressbar
 
@@ -114,7 +107,7 @@ class MainWidget(RelativeLayout):
     folder_num = NumericProperty(0)  # the positioning of the song
     songs_vol = NumericProperty(0)
     volume = NumericProperty(5)
-    song_num = NumericProperty(0)#test2
+    song_num = NumericProperty(0)  # test2
 
     def __init__(self, **kwargs) -> None:
         self.screen_man = ScreenManager()
@@ -159,8 +152,10 @@ class MainWidget(RelativeLayout):
             I use a lambda func to store the keys in the button"""
         num = 0
 
-        self.layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None)  # creates a gridlayout to add the buttons into
-        self.layout2.bind(minimum_height=self.layout2.setter('height'))  # not sure how it works but makes the scrollview work
+        # creates a gridlayout to add the buttons into
+        self.layout2 = GridLayout(cols=1, spacing=0, size_hint_y=None)
+        # not sure how it works but makes the scrollview work
+        self.layout2.bind(minimum_height=self.layout2.setter('height'))
 
         # uses the os.walk to search through the directory
         for root, dir, files in os.walk(self.music_dir):
@@ -174,27 +169,26 @@ class MainWidget(RelativeLayout):
                         self.list_of_files.append(self.music_path)
                         self.song_list1[self.length_of_list] = root
 
-                        file_name = self.song_list1[self.length_of_list].split('\\')
+                        file_name = self.song_list1[self.length_of_list].split(
+                            '\\')
                         # return str(file_name[-1].strip('.mp3'))
 
                         self.btn = MDRectangleFlatButton(text=file_name[-1], size_hint=(self.width, self.width), height=40,
-                                     md_bg_color=self.primary, text_color=self.background, line_color=self.background, on_press=(lambda x, y=num: self.screen_press(y)))
+                                                         md_bg_color=self.primary, text_color=self.background, line_color=self.background, on_press=(lambda x, y=num: self.screen_press(y)))
                         # appends the button to the grid layout.
                         self.layout2.add_widget(self.btn)
                         num += 1
                         self.length_of_list += 1
 
-
         # the length of te list is 1 integer to long so this removes 1
         self.length_of_list = self.length_of_list - 1
         # creates a scrollview to add the grid too.
         self.main_window = ScrollView(size_hint=(1, .86), size=(Window.width, Window.height),
-                                 do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
-                                 scroll_distance=100, pos_hint={'center_x': 0.5, 'center_y': 0.56})
+                                      do_scroll_x=False, do_scroll_y=True, scroll_timeout=300,
+                                      scroll_distance=100, pos_hint={'center_x': 0.5, 'center_y': 0.56})
 
         # adds the gird to the scrollview
         self.main_window .add_widget(self.layout2)
-
 
         # adds the scrollview to the main layout
         self.add_widget(self.main_window)
@@ -299,7 +293,6 @@ class MainWidget(RelativeLayout):
         else:
             self.text = "Playlist empty"
 
-
     def previous(self) -> None:
         """checks it your at the start of the playlist and either set the index to the length of the
             list to start the last song, or it removes -1 from the index and loads the previous song."""
@@ -341,7 +334,7 @@ class MainWidget(RelativeLayout):
         if str(b) == 'f10':
             self.vol_down()
 
-    def _keyboard_released(self, window: object, keycode: tuple) ->None:
+    def _keyboard_released(self, window: object, keycode: tuple) -> None:
         pass
 
     def vol_up(self) -> None:
@@ -350,19 +343,16 @@ class MainWidget(RelativeLayout):
         vol += 0.01
         self.ids.slider.value = vol * 100
 
-
     def vol_down(self) -> None:
         """gets the volume of the slider decreases the slider by one"""
         vol = self.ids.slider.value / 100
         vol -= 0.01
         self.ids.slider.value = vol * 100
 
-
     @staticmethod
     def set_vol(volume: int) -> None:
         """this is updates once every second. gets the volume of the slider decreases or increases it"""
         pygame.mixer.music.set_volume(volume)
-
 
     def setInterval(self, dt: float) -> None:
         self.get_settings()
@@ -415,7 +405,24 @@ class WindowsplayerApp(MDApp):
 
 
 if __name__ == '__main__':
+    array = ["⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿",
+             "⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢺⣿",
+             "⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠜⣿",
+             "⣿⣿⣿⣿⠿⠿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿⣿",
+             "⣿⣿⡏⠁⠀⠀⠀⠀⠀⣀⣠⣤⣤⣶⣶⣶⣶⣶⣦⣤⡄⠀⠀⠀⠀⢀⣴⣿",
+             "⣿⣿⣷⣄⠀⠀⠀⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⡧⠇⢀⣤⣶",
+             "⣿⣿⣿⣿⣿⣿⣾⣮⣭⣿⡻⣽⣒⠀⣤⣜⣭⠐⢐⣒⠢⢰",
+             "⣿⣿⣿⣿⣿⣿⣿⣏⣿⣿⣿⣿⣿⣿⡟⣾⣿⠂⢈⢿⣷⣞",
+             "⣿⣿⣿⣿⣿⣿⣿⣿⣽⣿⣿⣷⣶⣾⡿⠿⣿⠗⠈⢻⣿",
+             "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠻⠋⠉⠑⠀⠀⢘⢻",
+             "⣿⣿⣿⣿⣿⣿⣿⡿⠟⢹⣿⣿⡇⢀⣶⣶⠴⠶⠀⠀⢽",
+             "⣿⣿⣿⣿⣿⣿⡿⠀⠀⢸⣿⣿⠀⠀⠣⠀⠀⠀⠀⠀⡟⢿⣿",
+             "⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠹⣿⣧⣀⠀⠀⠀⠀⡀⣴⠁⢘⡙",
+             "⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⠗⠂⠄⠀⣴⡟⠀⠀⡃"]
+    for i in array:
+        print(i)
+
     WindowsplayerApp().run()
 
-#TODO: add a top bar with the options button
+# TODO: add a top bar with the options button
 # add a custom font
