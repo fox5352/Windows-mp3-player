@@ -6,3 +6,4 @@ more custom options will be added later down the line<br>
 <hr>
 ## this project will be on hold till I'm done learning front-end development
 heres a link to learn [kivy](https://youtu.be/l8Imtec4ReQ) 
+[This link](http://example.net/)
