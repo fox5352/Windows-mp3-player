@@ -5,4 +5,4 @@ the player looks for music in the music folder, and it will add them to the scre
 more custom options will be added later down the line<br>
 <hr>
 ## this project will be on hold till I'm done learning front-end development
-heres a [link]("https://youtu.be/l8Imtec4ReQ") to learn kivy 
+heres a link to learn [kivy](https://youtu.be/l8Imtec4ReQ) 
