@@ -8,3 +8,9 @@ this project will be on hold till I'm done learning front-end development
 <br>
 <br>
 so my gpu died so I won't be able to update this project 
+
+<!--
+
+dependencys: kivy kivymd pygame
+
+-->
